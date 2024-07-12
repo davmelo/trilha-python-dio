@@ -12,10 +12,11 @@ class ContaIterador:
     def __next__(self):
         try:
             conta = self.contas[self.contador]
-            self.contador += 1
             return conta
         except IndexError:
             raise StopIteration
+        finally:
+            self.contador += 1
 
 
 class Cliente:
@@ -97,11 +98,11 @@ class Conta:
 
         if deposito_valido:
             self._saldo += valor
-            print("\n## Depósito realizado com sucesso. ##")
+            print("\n ## Depósito realizado com sucesso. ##")
             return True
         
         else:
-            print("\n## Operação não realizada! O valor informado é inválido. ##")
+            print("\n ## Operação não realizada! O valor informado é inválido. ##")
             return False
 
 
@@ -159,8 +160,6 @@ class Extrato:
                 transacoes.append(transacao)
 
         return transacoes
-
-    
 
     def gerar_relatorio(self, tipo_transacao=None):
         for transacao in self._transacoes:
@@ -227,17 +226,18 @@ menu_opcao_extrato = '''
 
  -> '''
 
-# @log_operacoes
-def exibir_extrato(conta):
+def tipo_de_transacao_extrato():
     opcao = input(menu_opcao_extrato).strip().lower()
-    opcao = None if opcao == 't' else opcao
+    return None if opcao == 't' else opcao
 
+# @log_operacoes
+def exibir_extrato(conta, opcao):
     extrato = ""
     tem_transacao = False
     for transacao in conta.extrato.gerar_relatorio(tipo_transacao=opcao):
         tem_transacao = True
         tipo_transacao = "-" if transacao["tipo"] == "Saque" else "+"
-        extrato += f"\n     Tipo: {transacao["tipo"]}\n     {tipo_transacao}R$ {transacao["valor"]:.2f}\t{transacao["data"]}"
+        extrato += f"\n     Tipo: {transacao["tipo"]}\n     {tipo_transacao}R$ {transacao["valor"]:.2f}\t\t{transacao["data"]}"
 
     opcao = "saque" if opcao == 's' else "depósito"
     if not tem_transacao:
@@ -327,16 +327,31 @@ def mensagem_nao_cliente():
     print("\n Você ainda não é cliente do Banco Python. Cadastre-se antes de criar uma conta.")
 
 
+def mensagem_sem_transacoes(conta):
+    mensagem = f'''
+    ################## EXTRATO ##################
+
+    {conta.cliente.nome} {conta.agencia} {conta.numero}
+
+      Você ainda não fez movimentações nessa conta
+
+    Saldo: R${conta.saldo:.2f}    
+
+    #############################################'''
+    
+    print(mensagem)
+
 def percorrer_contas(contas):
+    opcao = tipo_de_transacao_extrato()
     for conta in contas:
-        print("\n  Você ainda não fez movimentações nessa conta") if not conta.transacoes else exibir_extrato(conta)
+        mensagem_sem_transacoes(conta) if not conta.extrato.transacoes else exibir_extrato(conta, opcao)
 
 
 def listar_contas(clientes):
     for cliente in clientes:
         for conta in ContaIterador(cliente.contas):
-            print("\n#" * 20)
-            print(f"{conta}\n     R$ {conta.saldo:.2f}")
+            print("\n ", "#" * 20)
+            print(f"{conta}\n     Saldo: R$ {conta.saldo:.2f}")
 
 menu = """ 
  Selecione um opção:
@@ -397,22 +412,27 @@ while True:
         else:
             if len(possui_conta) > 1:
                 
-                menu_extrato = "\n Como deseja fazer?\n [u] Extrato de uma conta\n [t] Extrato de todas as contas\n -> "
-                opcao_extrato = str(input(menu_extrato)).strip().lower()
+                menu_extrato = "\n Como deseja visualizar o extrato?\n [u] Extrato de uma conta\n [t] Extrato de todas as contas\n\n -> "
+                opcao_extrato = str(input(menu_extrato)).strip().lower()                
 
                 if opcao_extrato == 'u':
-                    numero_conta = int(input(" Insira o número da conta: "))
+                    numero_conta = int(input("\n Insira o número da conta: "))
                     conta = procurar_conta(cliente_encontrado, numero_conta)
-                    print("\n  Você ainda não fez movimentações nessa conta") if not conta.extrato.transacoes else exibir_extrato(conta)
+
+                    if conta:
+                        mensagem_sem_transacoes(conta) if not conta.extrato.transacoes else exibir_extrato(conta, tipo_de_transacao_extrato())
+
+                    else:
+                        print("\n ## Operação não realizada! Número de conta informado inválido.  ##")
 
                 elif opcao_extrato == 't':
                     percorrer_contas(cliente_encontrado.contas)
 
                 else:
-                    pass
+                    print("\n Selecione uma opção válida!")
 
             else:                
-                print("\n  Você ainda não fez movimentações nessa conta") if not possui_conta[0].extrato.transacoes else exibir_extrato(possui_conta[0])
+                mensagem_sem_transacoes(possui_conta[0]) if not possui_conta[0].extrato.transacoes else exibir_extrato(possui_conta[0], tipo_de_transacao_extrato())
 
     elif opcao == 'u':
         cpf = str(input("\n Insira seu CPF: "))
