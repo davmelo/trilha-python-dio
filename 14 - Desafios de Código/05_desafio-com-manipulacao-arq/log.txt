@@ -1,0 +1,10 @@
+[13-07-2024 19:01:54] Função 'cadastrar_cliente' executada com os argumentos ([<PessoaFisica: ('David Fernando', '123')>], '123') e {}. Retornou None
+[13-07-2024 19:05:40] Função 'criar_conta_corrente' executada com os argumentos (<PessoaFisica: ('David Fernando', '123')>, 1) e {}. Retornou None
+[13-07-2024 19:05:55] Função 'depositar' executada com os argumentos (<PessoaFisica: ('David Fernando', '123')>,) e {}. Retornou None
+[13-07-2024 19:06:32] Função 'depositar' executada com os argumentos (<PessoaFisica: ('David Fernando', '123')>,) e {}. Retornou None
+[13-07-2024 19:07:20] Função 'cadastrar_cliente' executada com os argumentos ([<PessoaFisica: ('David Fernando', '123')>, <PessoaFisica: ('WW', '456')>], '456') e {}. Retornou None
+[16-07-2024 20:40:39] Função 'cadastrar_cliente' executada com os argumentos ([<PessoaFisica: ('David')>], '123') e {}. Retornou None
+[16-07-2024 20:40:54] Função 'criar_conta_corrente' executada com os argumentos (<PessoaFisica: ('David')>, 1) e {}. Retornou None
+[16-07-2024 20:41:04] Função 'depositar' executada com os argumentos (<PessoaFisica: ('David')>,) e {}. Retornou None
+[16-07-2024 20:41:18] Função 'exibir_extrato' executada com os argumentos (<ContaCorrente: ('0001', '1', 'David')>, 'd') e {}. Retornou None
+[16-07-2024 20:41:32] Função 'exibir_extrato' executada com os argumentos (<ContaCorrente: ('0001', '1', 'David')>, None) e {}. Retornou None
